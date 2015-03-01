@@ -3,6 +3,7 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 var crypto = require('crypto');
 var server = require('../server');
+var notify = require('../notify');
 
 var MessageSchema   = new Schema({
 	sender: {***REMOVED***,
@@ -15,6 +16,7 @@ var MessageSchema   = new Schema({
 var MessageModel = mongoose.model('Message', MessageSchema);
 
 var ThreadModel = require('./thread').model;
+
 
 exports.createMessage = function(req, res) {
 
@@ -45,17 +47,21 @@ exports.createMessage = function(req, res) {
 			messageInstance.save(function(err){
 				if (err)res.send(err);
 
+				var regIds = new Array();
 				threadInstance.pins.forEach(function(_pin){
 					if (_pin != req.body.sender_hash){
-						if(server.conn_map[_pin]){
+						if(server.regId_map[_pin]){
+							// server.conn_map[_pin].write(JSON.stringify(messageInstance));
+							
+							regIds.push(server.regId_map[_pin]);
 
-							server.conn_map[_pin].write(JSON.stringify(messageInstance));
 					***REMOVED***
 						else {
 							//push notification?
 					***REMOVED***
 				***REMOVED***
-			***REMOVED***)
+			***REMOVED***);
+				// notify.notify(messageInstance, regIds);
 
 				res.json({
 					messageObj:messageInstance,

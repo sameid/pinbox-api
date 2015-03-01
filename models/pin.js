@@ -11,6 +11,7 @@ var PinSchema   = new Schema({
 		data: Buffer,
 		contentType: String
 ***REMOVED***
+	master: String
 ***REMOVED***);
 
 var PinModel = mongoose.model('Pin', PinSchema);
@@ -21,11 +22,14 @@ exports.model = PinModel;
 
 exports.createPin = function(req, res) {
 	var pinInstance = new PinModel();		// create a new instance of the member model
+	
 	pinInstance.hash = crypto.createHash('md5').update(req.body.pin + (new Date).toString()).digest("hex");
 	pinInstance.pin = req.body.pin;
 	pinInstance.password = crypto.createHash('md5').update(req.body.password).digest("hex");
-
-	pinInstance.pic.data = fs.readFileSync('./assets/'+Math.floor(Math.random() * 6) +'.jpg');
+	
+	pinInstance.master = pinInstance.hash;
+	
+	pinInstance.pic.data = fs.readFileSync('./assets/'+Math.floor(Math.random() * 10) +'.jpg');
 	pinInstance.pic.contentType = 'image/jpg';
 
 	pinInstance.save(function(err) {
@@ -38,6 +42,33 @@ exports.createPin = function(req, res) {
 		res.json({ message: 'pin created!', success:true , pin:pinInstance ***REMOVED***);
 ***REMOVED***);
 ***REMOVED***;
+
+exports.addPin = function(req, res){
+	PinModel.findOne({hash: req.params.pin_hash***REMOVED***, function(err, currentPinInstance) {
+		if (err) res.send(err);
+		
+		var newPinInstance = new PinModel();
+		
+		newPinInstance.hash = crypto.createHash('md5').update(req.body.pin + (new Date).toString()).digest("hex");
+		newPinInstance.pin = req.body.pin;
+		newPinInstance.password = currentPinInstance.password;
+		
+		newPinInstance.master = currentPinInstance.master;
+		
+		newPinInstance.pic.data = fs.readFileSync('./assets/'+Math.floor(Math.random() * 10) +'.jpg');
+		newPinInstance.pic.contentType = 'image/jpg';
+
+		newPinInstance.save(function(err){
+			if (err){
+				res.json({
+					message: err,
+					success: false
+			***REMOVED***);
+		***REMOVED***
+			res.json({ message: 'pin created!', success:true , pin:pinInstance ***REMOVED***);
+	***REMOVED***);
+***REMOVED***);
+***REMOVED***
 
 exports.findPicByHash = function (req,res){
 	PinModel.findOne({'hash':req.params.pin_hash***REMOVED***, function (err, pinInstance) {

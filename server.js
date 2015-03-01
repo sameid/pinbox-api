@@ -11,31 +11,39 @@ var morgan = require('morgan');
 var cors = require('cors');
 
 //SockJS Dependencies
-var sockjs = require('sockjs');
-var S = require('string');
+// var sockjs = require('sockjs');
+// var S = require('string');
 
 //Express
 var app	= express();
 var server = require('http').createServer(app);
 
-var echo = sockjs.createServer();
-var conn_map = {***REMOVED***;
-exports.conn_map = conn_map;
-echo.on('connection', function(conn) {
-    conn.on('data', function(message) {
-		console.log(message);
-		if (S(message).startsWith('pin:')){
-			var pin = S(message).chompLeft('pin:').s;
-			console.log('New socket connection with: ' + pin);
-			conn_map[pin] = conn;
-	***REMOVED***
-    ***REMOVED***);
-    conn.on('close', function() {
+// var echo = sockjs.createServer();
+var regId_map = {***REMOVED***;
+exports.regId_map = regId_map;
+// echo.on('connection', function(conn) {
+//     conn.on('data', function(message) {
+//     	var client = JSON.parse(message);
+// 		console.log(client);
+// 		if (client.init){
+// 			conn_map[client.hash] = {
+// 				socket: conn,
+// 				regId: client.regId
+// 		***REMOVED***
+// 	***REMOVED***
+// 		// console.log(message);
+// 		// if (S(message).startsWith('pin:')){
+// 		// 	var pin = S(message).chompLeft('pin:').s;
+// 		// 	console.log('New socket connection with: ' + pin);
+// 		// 	conn_map[pin] = conn;
+// 		// ***REMOVED***
+//     ***REMOVED***);
+//     conn.on('close', function() {
 
-***REMOVED***);
-***REMOVED***);
+// ***REMOVED***);
+// ***REMOVED***);
 
-echo.installHandlers(server, {prefix:'/echo'***REMOVED***);
+// echo.installHandlers(server, {prefix:'/echo'***REMOVED***);
 
 //Passport Session Libs
 var passport = require('passport');
@@ -127,7 +135,11 @@ router.route('/pins/:pin_hash')
 		Required Body:   *
 		Required Params: pin_hash
 	*/
-	.delete(auth, pinHandler.deletePin); //delete a pin
+	.delete(auth, pinHandler.deletePin) //delete a pin
+	.post(function (req, res){
+		regId_map[req.params.pin_hash] = req.body.regId;
+***REMOVED***);
+
 
 router.route('/pins/:pin_hash/pic')
 	/*
@@ -248,6 +260,8 @@ router.route('/login')
 			
 			if (err) return res.json(err);
 			if (!user) return res.json(info);
+
+			console.log(user);
 
 			req.login(user, function (err){
 				console.log(err)
