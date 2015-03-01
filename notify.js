@@ -13,6 +13,6 @@ exports.notify = function(message, regIds){
 	sender.sendMessage(message.toString(), regIds, true, function(err, data) {
     	if (!err) console.log(data);
     	else console.log(err);
-***REMOVED***);
-***REMOVED***
+	});
+}
 

@@ -6,12 +6,12 @@ var server = require('../server');
 var notify = require('../notify');
 
 var MessageSchema   = new Schema({
-	sender: {***REMOVED***,
+	sender: {},
 	content: String,
 	created: Date,
 	hash: String,
 	thread: String
-***REMOVED***);
+});
 
 var MessageModel = mongoose.model('Message', MessageSchema);
 
@@ -32,9 +32,9 @@ exports.createMessage = function(req, res) {
 	messageInstance.sender = {
 		hash:req.body.sender_hash,
 		name:req.body.sender_name
-***REMOVED***
+	}
 	
-	ThreadModel.findOne({'hash':req.body.thread_hash***REMOVED***, function(err, threadInstance){
+	ThreadModel.findOne({'hash':req.body.thread_hash}, function(err, threadInstance){
 		if (err)res.send(err);
 		if (threadInstance){
 			console.log(threadInstance);
@@ -42,7 +42,7 @@ exports.createMessage = function(req, res) {
 			threadInstance.lm = messageInstance;
 			threadInstance.save(function(err){
 				if(err)res.send(err);
-		***REMOVED***);
+			});
 
 			messageInstance.save(function(err){
 				if (err)res.send(err);
@@ -55,34 +55,34 @@ exports.createMessage = function(req, res) {
 							
 							regIds.push(server.regId_map[_pin]);
 
-					***REMOVED***
+						}
 						else {
 							//push notification?
-					***REMOVED***
-				***REMOVED***
-			***REMOVED***);
+						}
+					}
+				});
 				// notify.notify(messageInstance, regIds);
 
 				res.json({
 					messageObj:messageInstance,
 					message: 'Message Sent.',
 					success:true
-			***REMOVED***);
+				});
 				//do some push notification here...
-		***REMOVED***);
-	***REMOVED***
+			});
+		}
 		else {
 			res.json({
 				message:'Thread does not exist',
 				success:false
-		***REMOVED***)
-	***REMOVED***
+			})
+		}
 		
-***REMOVED***);
+	});
 
 	
 
-***REMOVED***
+}
 
 exports.findAllMessagesByThreadHash = function (req, res){
 	MessageModel
@@ -92,10 +92,10 @@ exports.findAllMessagesByThreadHash = function (req, res){
 		.select('content sender hash created thread')
 		.exec(function(err, messages){
 			if(err)res.send(err);
-			res.json({messages:messages, success:true***REMOVED***);
-	***REMOVED***);
+			res.json({messages:messages, success:true});
+		});
 
-***REMOVED***
+}
 
 // exports.readAllMessagesForPin = function(req, res){
 // 	MessageModel
@@ -105,36 +105,36 @@ exports.findAllMessagesByThreadHash = function (req, res){
 // 		.select('content recipient sender hash created')
 // 		.exec(function(err, messages){
 // 			if(err)res.send(err);
-// 			res.json({messages:messages, success:true***REMOVED***);
-// 	***REMOVED***);
-// ***REMOVED***
+// 			res.json({messages:messages, success:true});
+// 		});
+// }
 
 exports.readAllMessages = function(req, res) {
 	MessageModel.find(function(err, messages) {
 		if (err)res.send(err);
 
 		res.json(messages);
-***REMOVED***);
-***REMOVED***
+	});
+}
 
 exports.readMessage = function(req, res) {
-	MessageModel.findOne({'hash':req.params.message_hash***REMOVED***, function(err, messageInstance) {
+	MessageModel.findOne({'hash':req.params.message_hash}, function(err, messageInstance) {
 		if (err)
 			res.send(err);
-		res.json({data:messageInstance, success:true***REMOVED***);
-***REMOVED***);
-***REMOVED***
+		res.json({data:messageInstance, success:true});
+	});
+}
 
 exports.deleteMessage = function(req, res) {
 	MessageModel.remove({
 		_id: req.params.message_hash
-***REMOVED*** function(err, messageInstance) {
+	}, function(err, messageInstance) {
 		if (err)
 			res.send(err);
 
-		res.json({ message: 'Successfully deleted' ***REMOVED***);
-***REMOVED***);
-***REMOVED***
+		res.json({ message: 'Successfully deleted' });
+	});
+}
 
 
 

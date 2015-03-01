@@ -8,15 +8,15 @@ var ThreadSchema   = new Schema({
 	created: {
 		type:Date, 
 		default: Date.now
-***REMOVED***
+	},
 
 	hash: String,
 	last: {
 		type:Date,
 		default: Date.now
-***REMOVED***
-	lm: {***REMOVED***
-***REMOVED***);
+	},
+	lm: {}
+});
 
 var ThreadModel = mongoose.model('Thread', ThreadSchema);
 var PinModel = require('./pin').model;
@@ -27,9 +27,9 @@ exports.createThread = function(req, res) {
 	var pin_list = JSON.parse(req.body.pin_hashes);
 	ThreadModel
 		.findOne({ "$and": [ 
-    		{ "pins": { "$all": pin_list ***REMOVED*** ***REMOVED***,
-    		{ "pins": { "$size": pin_list.length ***REMOVED*** ***REMOVED***
-		]***REMOVED***)
+    		{ "pins": { "$all": pin_list } },
+    		{ "pins": { "$size": pin_list.length } }
+		]})
 		.exec(function(err, thread){
 			if (err)res.send(err);
 			if(thread){
@@ -37,8 +37,8 @@ exports.createThread = function(req, res) {
 					thread:thread,
 					message:'Thread Already Existed',
 					success:true
-			***REMOVED***);	
-		***REMOVED***
+				});	
+			}
 			else {
 				var threadInstance = new ThreadModel();
 				threadInstance.hash = crypto.createHash('md5').update((new Date).toString()).digest("hex");
@@ -49,22 +49,22 @@ exports.createThread = function(req, res) {
 						thread:threadInstance,
 						message: 'Thread Created.',
 						success:true
-				***REMOVED***)
-			***REMOVED***);
-		***REMOVED***
-	***REMOVED***);
+					})
+				});
+			}
+		});
 
 	
-***REMOVED***
+}
 
 exports.addPinToThread = function(req, res){
-	ThreadModel.findOne({'hash':req.params.thread_hash***REMOVED***, function(err, threadInstance){
+	ThreadModel.findOne({'hash':req.params.thread_hash}, function(err, threadInstance){
 		if(err)res.send(err);
-		if(!threadInstance)res.json({message:'Thread Hash does not exist', success:false***REMOVED***);
+		if(!threadInstance)res.json({message:'Thread Hash does not exist', success:false});
 
-		PinModel.findOne({'pin':req.body.pin_name***REMOVED***, function(err, pinInstance){
+		PinModel.findOne({'pin':req.body.pin_name}, function(err, pinInstance){
 			if(err)res.send(err);
-			if(!pinInstance)res.json({message:'Pin Hash does not exist', success:false***REMOVED***);
+			if(!pinInstance)res.json({message:'Pin Hash does not exist', success:false});
 
 			threadInstance.pins.push(pinInstance.hash);
 			threadInstance.save(function(err){
@@ -73,11 +73,11 @@ exports.addPinToThread = function(req, res){
 				res.json({
 					message:'Pin has been added to Thread',
 					success:true
-			***REMOVED***);
-		***REMOVED***);
-	***REMOVED***)
-***REMOVED***);
-***REMOVED***
+				});
+			});
+		})
+	});
+}
 
 exports.readThreads = function(req, res){
 	ThreadModel
@@ -86,12 +86,12 @@ exports.readThreads = function(req, res){
 	.where('pins').in([req.params.pin_hash])
 	.exec(function(err, threads){
 		if (err) res.send(err);
-		res.json({threads: threads, success:true***REMOVED***);
-***REMOVED***);
-***REMOVED***
+		res.json({threads: threads, success:true});
+	});
+}
 
 exports.findPinNamesByThreadHash = function (req, res){
-	ThreadModel.findOne({'hash': req.params.thread_hash***REMOVED***, function(err, threadInstance){
+	ThreadModel.findOne({'hash': req.params.thread_hash}, function(err, threadInstance){
 		if (err)res.send(err);
 		PinModel
 			.find()
@@ -102,30 +102,30 @@ exports.findPinNamesByThreadHash = function (req, res){
 				var names = [];
 				pins.forEach(function(pin){
 					if (req.params.pin_hash != pin.hash)names.push(pin.pin);
-			***REMOVED***)
-				res.json({pins: names, success:true***REMOVED***);
-		***REMOVED***);
-***REMOVED***);
-***REMOVED***
+				})
+				res.json({pins: names, success:true});
+			});
+	});
+}
 
 exports.readThread = function(req, res) {
-	ThreadModel.findOne({'hash':req.params.thread_hash***REMOVED***, function(err, threadInstance) {
+	ThreadModel.findOne({'hash':req.params.thread_hash}, function(err, threadInstance) {
 		if (err)
 			res.send(err);
-		res.json({data:threadInstance, success:true***REMOVED***);
-***REMOVED***);
-***REMOVED***
+		res.json({data:threadInstance, success:true});
+	});
+}
 
 exports.deleteThread = function(req, res) {
 	ThreadModel.remove({
 		_id: req.params.thread_hash
-***REMOVED*** function(err, threadInstance) {
+	}, function(err, threadInstance) {
 		if (err)
 			res.send(err);
 
-		res.json({ message: 'Successfully deleted' ***REMOVED***);
-***REMOVED***);
-***REMOVED***
+		res.json({ message: 'Successfully deleted' });
+	});
+}
 
 
 

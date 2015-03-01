@@ -19,7 +19,7 @@ var app	= express();
 var server = require('http').createServer(app);
 
 // var echo = sockjs.createServer();
-var regId_map = {***REMOVED***;
+var regId_map = {};
 exports.regId_map = regId_map;
 // echo.on('connection', function(conn) {
 //     conn.on('data', function(message) {
@@ -29,21 +29,21 @@ exports.regId_map = regId_map;
 // 			conn_map[client.hash] = {
 // 				socket: conn,
 // 				regId: client.regId
-// 		***REMOVED***
-// 	***REMOVED***
+// 			}
+// 		}
 // 		// console.log(message);
 // 		// if (S(message).startsWith('pin:')){
 // 		// 	var pin = S(message).chompLeft('pin:').s;
 // 		// 	console.log('New socket connection with: ' + pin);
 // 		// 	conn_map[pin] = conn;
-// 		// ***REMOVED***
-//     ***REMOVED***);
+// 		// }
+//     });
 //     conn.on('close', function() {
 
-// ***REMOVED***);
-// ***REMOVED***);
+// 	});
+// });
 
-// echo.installHandlers(server, {prefix:'/echo'***REMOVED***);
+// echo.installHandlers(server, {prefix:'/echo'});
 
 //Passport Session Libs
 var passport = require('passport');
@@ -51,7 +51,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var RedisStore = require('connect-redis')(session);
 
 //Middleware Instantiation
-app.use(multer({uploadDir:'./uploads'***REMOVED***));
+app.use(multer({uploadDir:'./uploads'}));
 app.use(bodyParser());
 app.use(cookieParser());
 app.use(morgan('tiny'));
@@ -62,12 +62,12 @@ app.use(session({
     store: new RedisStore({
         host: Environment.redis.host, 
         port: Environment.redis.port
-    ***REMOVED***),
+    }),
     secret: Environment.redis.secret,
     cookie: {
     	httpOnly: false
-    ***REMOVED***
-***REMOVED***));
+    }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -76,7 +76,7 @@ app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
-***REMOVED***);
+});
 
 var port = process.env.PORT || 8080; // set our port
 
@@ -88,7 +88,7 @@ var threadHandler = require('./models/thread');
 
 var connection = mongoose.connect(Environment.mongo.connectString, function(err){
 	if (err) console.log(err);
-***REMOVED***); // connect to our database
+}); // connect to our database
 
 
 //Passport Specific stuff
@@ -99,17 +99,17 @@ passport.deserializeUser(pinHandler.deserialize);
 var auth = function (req, res, next) {
 
 	// console.log(res);x
-  if (req.isAuthenticated()) { next(); ***REMOVED***
+  if (req.isAuthenticated()) { next(); }
   else {
   	res.send("Your request was not authenticated, please login.");
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 var router = express.Router();
 
 router.get('/', function(req, res) {
-	res.json({ message: 'PushPin API v0.0.1' ***REMOVED***);	
-***REMOVED***);
+	res.json({ message: 'PushPin API v0.0.1' });	
+});
 
 router.route('/pins')
 	/*
@@ -138,7 +138,7 @@ router.route('/pins/:pin_hash')
 	.delete(auth, pinHandler.deletePin) //delete a pin
 	.post(function (req, res){
 		regId_map[req.params.pin_hash] = req.body.regId;
-***REMOVED***);
+	});
 
 
 router.route('/pins/:pin_hash/pic')
@@ -267,16 +267,16 @@ router.route('/login')
 				console.log(err)
 				if (err) return res.json(err);
 				return res.json(user);
-		***REMOVED***);
+			});
 
-	***REMOVED***)(req, res);
-***REMOVED***);
+		})(req, res);
+	});
 
 router.route('/logout')
 	.get(function (req,res){
 		req.logout();
-		res.json({success:true***REMOVED***);
-***REMOVED***);
+		res.json({success:true});
+	});
 
 // REGISTER OUR ROUTES -------------------------------
 app.use('/api', router);

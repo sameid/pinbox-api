@@ -10,9 +10,9 @@ var PinSchema   = new Schema({
 	pic: {
 		data: Buffer,
 		contentType: String
-***REMOVED***
+	},
 	master: String
-***REMOVED***);
+});
 
 var PinModel = mongoose.model('Pin', PinSchema);
 
@@ -37,14 +37,14 @@ exports.createPin = function(req, res) {
 			res.json({
 				message: err,
 				success: false
-		***REMOVED***);
-	***REMOVED***
-		res.json({ message: 'pin created!', success:true , pin:pinInstance ***REMOVED***);
-***REMOVED***);
-***REMOVED***;
+			});
+		}
+		res.json({ message: 'pin created!', success:true , pin:pinInstance });
+	});
+};
 
 exports.addPin = function(req, res){
-	PinModel.findOne({hash: req.params.pin_hash***REMOVED***, function(err, currentPinInstance) {
+	PinModel.findOne({hash: req.params.pin_hash}, function(err, currentPinInstance) {
 		if (err) res.send(err);
 		
 		var newPinInstance = new PinModel();
@@ -63,26 +63,26 @@ exports.addPin = function(req, res){
 				res.json({
 					message: err,
 					success: false
-			***REMOVED***);
-		***REMOVED***
-			res.json({ message: 'pin created!', success:true , pin:pinInstance ***REMOVED***);
-	***REMOVED***);
-***REMOVED***);
-***REMOVED***
+				});
+			}
+			res.json({ message: 'pin created!', success:true , pin:pinInstance });
+		});
+	});
+}
 
 exports.findPicByHash = function (req,res){
-	PinModel.findOne({'hash':req.params.pin_hash***REMOVED***, function (err, pinInstance) {
+	PinModel.findOne({'hash':req.params.pin_hash}, function (err, pinInstance) {
         if (err) return next(err);
         res.contentType(pinInstance.pic.contentType);
         res.send(pinInstance.pic.data);
-    ***REMOVED***);
-***REMOVED***
+    });
+}
 
 
 exports.addPicToPin = function(req, res){
 
 	console.log(req.files);
-	PinModel.findOne({hash: req.params.pin_hash***REMOVED***, function(err, pinInstance) {
+	PinModel.findOne({hash: req.params.pin_hash}, function(err, pinInstance) {
 		if (err)
 			res.send(err);
 
@@ -94,12 +94,12 @@ exports.addPicToPin = function(req, res){
 				res.json({
 					message: err,
 					success: false
-			***REMOVED***);
-		***REMOVED***
-			res.json({ message: 'pic added to pin!', success:true ***REMOVED***);
-	***REMOVED***);
-***REMOVED***);
-***REMOVED***
+				});
+			}
+			res.json({ message: 'pic added to pin!', success:true });
+		});
+	});
+}
 
 exports.readAllPins = function(req, res){
 	var re = new RegExp(req.params.search_term, 'i');
@@ -115,58 +115,58 @@ exports.readAllPins = function(req, res){
 			unsalted.push({
 				hash: pinInstance.hash,
 				pin: pinInstance.pin
-		***REMOVED***)
-	***REMOVED***)
+			})
+		})
 		res.json(unsalted);
-***REMOVED***);
-***REMOVED***
+	});
+}
 
 exports.readPin = function(req, res) {
-	PinModel.findOne({hash: req.params.pin_hash***REMOVED***, function(err, pin) {
+	PinModel.findOne({hash: req.params.pin_hash}, function(err, pin) {
 		if (err)
 			res.send(err);
 		res.json(pin);
-***REMOVED***);
-***REMOVED***;
+	});
+};
 
 
 exports.deletePin = function(req, res) {
 	PinModel.remove({
 		hash: req.params.pin_hash
-***REMOVED*** function(err, pin) {
+	}, function(err, pin) {
 		if (err)
 			res.send(err);
 
-		res.json({ message: 'Successfully deleted pin' ***REMOVED***);
-***REMOVED***);
-***REMOVED***;
+		res.json({ message: 'Successfully deleted pin' });
+	});
+};
 
 exports.authenticate = function (pin, password, done){
     pass = crypto.createHash('md5').update(password).digest("hex");
-    PinModel.findOne({'pin':pin***REMOVED***,function (err, item){
+    PinModel.findOne({'pin':pin},function (err, item){
     	if (err){ 
     		return done(err);
-    ***REMOVED***
+    	}
     	else if (item){
     		if (pass == item.password){
     			return done (null, {pin :{
     				hash: item.hash,
     				pic: item.pic,
     				name: item.pin
-    		***REMOVED*** message:"Successfully signed in", success:true***REMOVED***);
-    	***REMOVED***
-    		else done (null, false, {message: 'Incorrect Password', success:false ***REMOVED***);
-    ***REMOVED***
-    	else return done(null, false, {message:'Pin doesn\'t exist.', success:false ***REMOVED***);
-    ***REMOVED***);
-***REMOVED***;
+    			}, message:"Successfully signed in", success:true});
+    		}
+    		else done (null, false, {message: 'Incorrect Password', success:false });
+    	}
+    	else return done(null, false, {message:'Pin doesn\'t exist.', success:false });
+    });
+};
 
 exports.serialize = function (obj, done){
     done (null, obj.pin.hash);
-***REMOVED***;
+};
 
 exports.deserialize = function (hash, done){
-	PinModel.findOne({'hash': hash***REMOVED***, function (err, item){
+	PinModel.findOne({'hash': hash}, function (err, item){
 		done(err, item);
-***REMOVED***);
-***REMOVED***;
+	});
+};
